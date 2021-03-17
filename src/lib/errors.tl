@@ -4,10 +4,6 @@ local record errors
     record Error
         Error: function(): string
     end
-
-    New: function(string): Error
-    Newf: function(string, any): Error
-    Unwrap: function(Error): Error
 end
 
 -- localize the Error type for brevity
