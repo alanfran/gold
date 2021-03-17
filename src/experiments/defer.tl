@@ -15,10 +15,10 @@ function defer.Call(f: function)
     -- and not any other functions it may be calling
     local deferer = debug.getinfo(2, "n")
 
-    local count = 0
     debug.sethook(function()
         local parent = debug.getinfo(2, "n")
         if parent.name == deferer.name  then
+            -- call the deferred function
             f()
 
             -- remove the hook
