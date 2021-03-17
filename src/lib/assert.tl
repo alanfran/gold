@@ -2,6 +2,9 @@ local testing = require("testing")
 
 -- inspired by github.com/stretchr/testify
 
+-- TODO:
+--   * implement better printing for table types
+
 local assert = {}
 
 -- TODO: refactor into a deep module
