@@ -10,25 +10,25 @@ function TestDefer(t: testing.T)
     -- behaves correctly. this should involve at least 2 layers of returns
     local function doSomething()
         
-        local function one() 
-            array[#array+1] = 1
-            return
-        end
-        one()
+        array[#array+1] = 1
         
         defer.Call(function()
             array[#array+1] = 6
             return
         end)
         
-        array[#array+1] = 2
+        local function two() 
+            array[#array+1] = 2
+            return
+        end
+        two()
 
         local function four()
             local function three()
                 array[#array+1] = 3
             end
             three()
-            
+
             array[#array+1] = 4
             return
         end
