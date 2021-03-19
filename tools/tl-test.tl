@@ -17,6 +17,53 @@
 local testing = require("testing")
 local errors = require("errors")
 
+-- private fields for our implementation of T
+local type privateT = record
+    isFailed: boolean
+    logLines: {string}
+end
+
+-- private factory for an implementation of testing.T and a table containing
+-- its private fields
+local function newT(): testing.T, privateT
+    local t = {}
+    local private = {
+        isFailed = false,
+        logLines = {}
+    }
+    
+    function t.Log(msg: string)
+        private.logLines[#private.logLines+1] = msg
+    end
+
+    function t.Fail()
+        private.isFailed = true
+    end
+
+    function t.Error(msg: string)
+        t.Log(msg)
+        t.Fail()
+    end
+
+    function t.Errorf(msg: string, ...: any)
+        t.Error(string.format(msg, ...))
+    end
+
+    function t.Failed(): boolean
+        return private.isFailed
+    end
+
+    return t, private
+end
+
+-- NewT returns a new test context.
+function testing.NewT(): testing.T
+    -- do not return the private table
+    local t, _ = newT()
+
+    return t
+end
+
 -- runFile requires a file, runs any global Test functions, and prints the results.
 function runModule(moduleName: string)
     -- the require keyword gets special treatment by the tl compiler
@@ -33,13 +80,13 @@ function runModule(moduleName: string)
         if type(k) == "string" and 
         string.sub(k as string, 1, 4) == "Test" and 
         type(testFunction) == "function" then
-            local t = testing.NewT()
+            local t, private = newT()
 
             print(string.format("=== RUN   %s", k))
 
-            testFunction(t)
+            testFunction(t as testing.T)
 
-            if t.isFailed then
+            if t.Failed() then
                 failures = failures + 1
                 print(string.format("--- FAIL: %s", k))
             else
@@ -50,7 +97,7 @@ function runModule(moduleName: string)
 
             -- TODO: learn the debug library and add line numbers to T:Log
             -- and T:Fail?
-            for _, logLine in ipairs(t.logLines) do
+            for _, logLine in ipairs(private.logLines) do
                 print(string.format("    %s", logLine))
             end
 

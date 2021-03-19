@@ -23,11 +23,11 @@ function TestEqual(t: testing.T)
         local subtest = testing.NewT()
         assert.Equal(subtest, testCase.a, testCase.b)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
+            t.Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
         end
     end
 end
@@ -50,11 +50,11 @@ function TestNotEqual(t: testing.T)
         local subtest = testing.NewT()
         assert.NotEqual(subtest, testCase.a, testCase.b)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
+            t.Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
         end
     end
 end
@@ -75,11 +75,11 @@ function TestTrue(t: testing.T)
         local subtest = testing.NewT()
         assert.True(subtest, testCase.a)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
+            t.Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
         end
     end
 end
@@ -100,11 +100,11 @@ function TestFalse(t: testing.T)
         local subtest = testing.NewT()
         assert.False(subtest, testCase.a)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
+            t.Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
         end
     end
 end
@@ -138,11 +138,11 @@ function TestNil(t: testing.T)
         local subtest = testing.NewT()
         assert.Nil(subtest, testCase.a)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
+            t.Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
         end
     end
 end
@@ -176,11 +176,11 @@ function TestNotNil(t: testing.T)
         local subtest = testing.NewT()
         assert.NotNil(subtest, testCase.a)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
+            t.Errorf("expected: %s  actual: %s", testCase.expectedFail, actualFailed)
         end
     end
 end
@@ -247,11 +247,11 @@ function TestContains(t: testing.T)
         local subtest = testing.NewT()
         assert.Contains(subtest, testCase.haystack, testCase.needle)
         -- capture the result
-        local actualFailed = subtest:Failed()
+        local actualFailed = subtest.Failed()
 
         -- use a standard comparison and T:Fail
         if testCase.expectedFail ~= actualFailed then
-            t:Errorf("i: %d  expected: %s  actual: %s",i, testCase.expectedFail, actualFailed)
+            t.Errorf("i: %d  expected: %s  actual: %s",i, testCase.expectedFail, actualFailed)
         end
     end
 end
