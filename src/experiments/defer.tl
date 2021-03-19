@@ -4,11 +4,12 @@ local registry: {number:{function}} = {}
 local isHookSet = false
 
 local function push(n: number, f: function)
-    -- init logic
-
+    -- validation
     if registry[n] == nil then
         registry[n] = {}
     end
+
+    -- push the function to the end of the list for this stack level
     local len = #registry[n]
     registry[n][len+1] = f
 end
@@ -29,9 +30,9 @@ local function popAll(n: number)
         registry[n][i]()
     end
 
-    registry[n] = nil
-
     -- cleanup
+
+    registry[n] = nil
 
     -- if there are no more defers on the stack,
     -- remove our hook function to speed up the VM
@@ -47,6 +48,7 @@ local function popAll(n: number)
     end
 end
 
+-- stackHeight returns the height of the stack where it is called.
 function stackHeight(): number
     -- find the bottom of the stack
     local n = 3
@@ -63,12 +65,10 @@ end
 -- Warning: This uses the debug library and may not work or break your code.
 -- And any pending defers will slow down program execution significantly, eg: 70 times slower.
 function defer.Call(f: function)
-    local funcMask = "f"
     local returnMask = "r"
 
     -- we want to get the stack height so we can tell when to execute the deferred function
     local n = stackHeight()
-    -- print(n)
 
     -- set up our registry hook if it isn't active
     if not isHookSet then
