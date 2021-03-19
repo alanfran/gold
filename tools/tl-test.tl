@@ -84,7 +84,7 @@ function runModule(moduleName: string)
 
             print(string.format("=== RUN   %s", k))
 
-            testFunction(t as testing.T)
+            testFunction(t)
 
             if t.Failed() then
                 failures = failures + 1
