@@ -43,8 +43,9 @@ function TestDefer(t: testing.T)
     assert.Equal(t, {1,2,3,4,5,6}, array)
 end
 
---     with defer, 1000 iterations took: 2.366 ms
---     without defer, 1000 iterations took: 0.035 ms
+-- with defer, 1,000 iterations took: 16.21 ms
+-- without defer, 1,000 iterations took: 0.224 ms
+-- overhead ratio: 72.366071428571
 function TestDeferBenchmark(t: testing.T)
 
     local function doSomethingWithDefer()

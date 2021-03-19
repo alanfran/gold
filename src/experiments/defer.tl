@@ -60,13 +60,13 @@ function stackHeight(): number
 end
 
 -- Call sets a function to be executed when the calling function returns.
--- Warning: This is a quick experimental implementation that does not support
--- more than one defer at a time.
+-- Warning: This uses the debug library and may not work or break your code.
+-- And any pending defers will slow down program execution significantly, eg: 70 times slower.
 function defer.Call(f: function)
     local funcMask = "f"
     local returnMask = "r"
 
-    -- we want to get the traceback height so we can tell when to execute the deferred function
+    -- we want to get the stack height so we can tell when to execute the deferred function
     local n = stackHeight()
     -- print(n)
 
