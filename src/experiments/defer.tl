@@ -1,6 +1,7 @@
 local defer = {}
 
 local registry: {number:{function}} = {}
+local isHookSet = false
 
 local function push(n: number, f: function)
     -- init logic
@@ -42,18 +43,20 @@ local function popAll(n: number)
     
     if len == 0 then
         debug.sethook()
+        isHookSet = false
     end
 end
 
-function tracebackHeight(): number
-    local traceback = debug.traceback()
-
-    local lines = {}
-    for s in string.gmatch(traceback, "[^\r\n]+") do
-        lines[#lines+1] = s
+function stackHeight(): number
+    -- find the bottom of the stack
+    local n = 3
+    while true do
+        local info = debug.getinfo(n, "")
+        if info == nil then
+            return n
+        end
+        n = n + 1
     end
-
-    return #lines
 end
 
 -- Call sets a function to be executed when the calling function returns.
@@ -64,17 +67,19 @@ function defer.Call(f: function)
     local returnMask = "r"
 
     -- we want to get the traceback height so we can tell when to execute the deferred function
-    local n = tracebackHeight()
+    local n = stackHeight()
+    -- print(n)
 
     -- set up our registry hook if it isn't active
-    if debug.gethook() == nil then
+    if not isHookSet then
         local hook = function()
             -- get the stack trace
-            local n2 = tracebackHeight()
+            local n2 = stackHeight()
             popAll(n2)
 
         end
         debug.sethook(hook, returnMask)
+        isHookSet = true
     end
 
     -- push the function onto the stack to be executed when the calling function returns

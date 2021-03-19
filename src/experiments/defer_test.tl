@@ -99,6 +99,7 @@ function TestDeferBenchmark(t: testing.T)
     t.Log(string.format("with defer, 1,000 iterations took: %s ms", withDefer*1000))
 
 
+
     startTime = os.clock()
     for i = 1,1000 do
         doSomethingWithoutDefer()
