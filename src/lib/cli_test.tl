@@ -16,8 +16,13 @@ function TestNew(t: testing.T)
             ShortName = "t",
         },
         {
-            LongName = "unused",
+            LongName = "unused3",
             ShortName = "u",
+        },
+        {
+            LongName = "bool",
+            ShortName = "b",
+            Type = "boolean"
         },
     }
 
@@ -25,7 +30,11 @@ function TestNew(t: testing.T)
     -- generated help message
 
     local runner = cli.New(flags, {})
-    local err = runner.Run({"test", "-f", "value", "--thing", "ok", "quoted string1", "--", "--unused", "posarg3"})
+
+    -- parse a mix of positional args and flags
+    -- contains boolean with 0 args
+    -- contains "--" followed by a flag that should be parsed as a positional arg
+    local err = runner.Run({"test1", "-f", "value", "--thing", "ok", "--bool", "quoted string2", "--", "--unused3", "posarg4"})
     assert.Nil(t, err)
 
 
@@ -47,9 +56,27 @@ function TestNew(t: testing.T)
     assert.Equal(t, false, ok)
     assert.Equal(t, nil, value)
 
+    value, ok = runner.Value("bool")
+    assert.Equal(t, true, ok)
+    assert.Equal(t, true, value)
+
     -- positional arguments
     
-    -- value, ok = runner.Arg(1)
-    -- assert.Equal(t, true, ok)
-    -- assert.Equal(t, "quoted string1", value)
+    assert.Equal(t, {"test1", "quoted string2", "--unused3", "posarg4"}, runner.Args())
+
+    value, ok = runner.Arg(1)
+    assert.Equal(t, true, ok)
+    assert.Equal(t, "test1", value)
+
+    value, ok = runner.Arg(2)
+    assert.Equal(t, true, ok)
+    assert.Equal(t, "quoted string2", value)
+
+    value, ok = runner.Arg(3)
+    assert.Equal(t, true, ok)
+    assert.Equal(t, "--unused3", value)
+
+    value, ok = runner.Arg(4)
+    assert.Equal(t, true, ok)
+    assert.Equal(t, "posarg4", value)
 end

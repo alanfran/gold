@@ -1,29 +1,30 @@
 local errors = require("errors")
 
--- TODO: 
--- * --flag=foo syntax
-
+-- This module implements a simple command line argument parser with support
+-- for flags and positional arguments.
 local record cli
     record CLI
         Run: function(args: {string}): errors.Error
         Value: function(key: string): string, boolean
+        Arg: function(n: number): string, boolean
+        Args: function(): {string}
     end
     record Flag
         ShortName: string
         LongName: string
         Description: string
         Default: any
-        -- Type: FlagType
+        Type: FlagType
     end
     record Command
         Name: string
         Func: function(args: {string}): errors.Error
     end
-    -- enum FlagType
-    --     "string"
-    --     "number"
-    --     "boolean"
-    -- end
+    enum FlagType
+        "string"
+        "number"
+        "boolean"
+    end
 
     New: function(flags: {Flag}, commands: {Command}): CLI
 end
@@ -33,10 +34,13 @@ local type Flag = cli.Flag
 local type Command = cli.Command
 
 local type privateCLI = record
+    -- map from both short and long name to Command
     commands: {string:Command}
+    -- map from both short and long name to Flag
     flags: {string:Flag}
 
-    values: {string:string}
+    -- map from long name to value
+    values: {string:any}
     positionalArgs: {string}
 end
 
@@ -51,22 +55,34 @@ local function run(private: privateCLI, args: {string}): errors.Error
             break
         end
 
-        -- TODO: subcommand
+        -- TODO: subcommands
 
-        -- flags have 0 or 1 arguments, where booleans are set to true with no following value
-        -- --real foo
-        -- --someBoolean 
+        -- parse flags
         if private.flags[args[i]] and not endOfOptions then
-            -- TODO: if it's a boolean, set it to true
+            local flag = private.flags[args[i]]
+            local key = flag.LongName
 
-            if len < i + 1 then
-                return errors.Newf("no value for %s", args[i])
+            -- Boolean flags are a special case that can have 0 arguments.
+            if flag.Type == "boolean" then
+                if len > i and args[i+1] == "true" then
+                    private.values[key] = true
+                    i = i + 2
+                elseif len > i and args[i+1] == "false" then
+                    private.values[key] = false
+                    i = i + 2
+                else
+                    private.values[key] = true
+                    i = i + 1
+                end
+            else 
+                -- every other flag type has 1 argument separated by a space
+                if len < (i + 1) then
+                    return errors.Newf("no value for %s", args[i])
+                end
+    
+                private.values[key] = args[i+1]
+                i = i + 2
             end
-
-            local key = private.flags[args[i]].LongName
-
-            private.values[key] = args[i+1]
-            i = i + 2
         elseif args[i] == "--" then
             endOfOptions = true
             i = i+1
@@ -77,6 +93,14 @@ local function run(private: privateCLI, args: {string}): errors.Error
     end
 end
 
+local function copy(old: {string}): {string}
+    local new = {}
+    for k,v in ipairs(old) do
+        new[k] = v
+    end
+    return new
+end
+
 function cli.New(flags: {Flag}, commands: {Command}): CLI
     local c = {}
     local private = {
@@ -85,6 +109,8 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
         values = {},
         positionalArgs = {}
     }
+
+    -- Initialization
 
     for k,_ in ipairs(flags) do
         local shortFlag = "-"..flags[k].ShortName
@@ -97,6 +123,8 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
         private.commands[#private.commands+1] = commands[k]
     end
 
+    -- Method implementations
+
     function c.Run(args: {string}): errors.Error
         return run(private, args)
     end
@@ -107,6 +135,20 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
         end
         
         return private.values[key], true
+    end
+
+    function c.Arg(i: number): any, boolean
+        local len = #private.positionalArgs
+        if i > len then
+            return nil, false
+        end
+
+        return private.positionalArgs[i], true
+    end
+
+    function c.Args(): any
+        -- return a copy so consumers can't mutate our private data
+        return copy(private.positionalArgs)
     end
 
     return c
