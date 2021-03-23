@@ -9,6 +9,7 @@ A collection of modules that make writing [Teal](https://github.com/teal-languag
 * `assert` - easy assertions for tests 
 * `errors` - exports an error interface and common functions
 * `unsafe` - provides the ability to catch lua errors within a lambda and return them as values
+* `cli` - provides command line interface functionality including flags and positional arguments
 
 ## Tools
 * `tl-test` - a simple test runner for the `testing.T` interface. Can run all test functions in a single file, or in all `*_test.tl` files under a directory recursively with the `path/...` notation. See `src/lib` for example test files.
