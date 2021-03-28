@@ -30,7 +30,7 @@ local function deepEqual(a: any, b: any): boolean
     end
 
     if type(a) == "table" then
-        for k,v in pairs(a as table) do
+        for k,_ in pairs(a as table) do
             if not deepEqual((a as table)[k], (b as table)[k]) then
                 return false
             end

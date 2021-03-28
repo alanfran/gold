@@ -37,7 +37,7 @@ local function popAll(n: number)
     -- if there are no more defers on the stack,
     -- remove our hook function to speed up the VM
 
-    local len: number = 0
+    len = 0
     for _,_ in pairs(registry) do
         len = len+1
     end
@@ -49,7 +49,7 @@ local function popAll(n: number)
 end
 
 -- stackHeight returns the height of the stack where it is called.
-function stackHeight(): number
+local function stackHeight(): number
     -- find the bottom of the stack
     local n = 3
     while true do

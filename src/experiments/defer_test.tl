@@ -65,7 +65,7 @@ function TestDeferBenchmark(t: testing.T)
 
         -- let's say your average function makes 5 calls itself
         -- that's 5 returns our hook is catching
-        for i=1,5 do
+        for _ = 1,5 do
             f()
         end 
 
@@ -83,7 +83,7 @@ function TestDeferBenchmark(t: testing.T)
         local x, y = 1, 1
         _G.assert(x + y == 2)
 
-        for i=1,5 do
+        for _ = 1,5 do
             f()
         end 
 
@@ -91,7 +91,7 @@ function TestDeferBenchmark(t: testing.T)
     end
 
     local startTime = os.clock() 
-    for i = 1,1000 do
+    for _ = 1,1000 do
         doSomethingWithDefer()
     end
     local endTime = os.clock()
@@ -102,7 +102,7 @@ function TestDeferBenchmark(t: testing.T)
 
 
     startTime = os.clock()
-    for i = 1,1000 do
+    for _ = 1,1000 do
         doSomethingWithoutDefer()
     end
     endTime = os.clock()

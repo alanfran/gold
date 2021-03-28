@@ -5,8 +5,8 @@ local errors = require("errors")
 local record cli
     record CLI
         Run: function(args: {string}): errors.Error
-        Value: function(key: string): string, boolean
-        Arg: function(n: number): string, boolean
+        Value: function(key: string): any, boolean
+        Arg: function(n: integer): string, boolean
         Args: function(): {string}
     end
     record Flag
@@ -103,7 +103,7 @@ end
 
 function cli.New(flags: {Flag}, commands: {Command}): CLI
     local c = {}
-    local private = {
+    local private: privateCLI = {
         commands = {},
         flags = {},
         values = {},
@@ -119,9 +119,11 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
         private.flags[longFlag] = flags[k]
     end
 
-    for k,_ in ipairs(commands) do
-        private.commands[#private.commands+1] = commands[k]
+    for k,command in ipairs(commands) do
+        private.commands[command.Name] = commands[k]
     end
+
+    -- TODO: default values
 
     -- Method implementations
 
@@ -137,7 +139,7 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
         return private.values[key], true
     end
 
-    function c.Arg(i: number): any, boolean
+    function c.Arg(i: integer): string, boolean
         local len = #private.positionalArgs
         if i > len then
             return nil, false
@@ -146,7 +148,7 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
         return private.positionalArgs[i], true
     end
 
-    function c.Args(): any
+    function c.Args(): {string}
         -- return a copy so consumers can't mutate our private data
         return copy(private.positionalArgs)
     end
