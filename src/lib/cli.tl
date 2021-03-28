@@ -112,18 +112,21 @@ function cli.New(flags: {Flag}, commands: {Command}): CLI
 
     -- Initialization
 
-    for k,_ in ipairs(flags) do
-        local shortFlag = "-"..flags[k].ShortName
-        local longFlag = "--"..flags[k].LongName
+    for k, flag in ipairs(flags) do
+        local shortFlag = "-"..flag.ShortName
+        local longFlag = "--"..flag.LongName
+
+        -- add to flag registry
         private.flags[shortFlag] = flags[k]
         private.flags[longFlag] = flags[k]
+
+        -- set default value
+        private.values[flag.LongName] = flag.Default
     end
 
     for k,command in ipairs(commands) do
         private.commands[command.Name] = commands[k]
     end
-
-    -- TODO: default values
 
     -- Method implementations
 

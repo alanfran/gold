@@ -24,6 +24,11 @@ function TestNew(t: testing.T)
             ShortName = "b",
             Type = "boolean"
         },
+        {
+            LongName = "defaulter1",
+            ShortName = "d",
+            Default = "unset_default_value"
+        },
     }
 
     -- expect:
@@ -41,11 +46,11 @@ function TestNew(t: testing.T)
     -- test flag parsing
 
     local value, ok = runner.Value("flag")
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, "value", value)
 
     value, ok = runner.Value("thing")
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, "ok", value)
 
     value, ok = runner.Value("unused")
@@ -57,7 +62,7 @@ function TestNew(t: testing.T)
     assert.Equal(t, nil, value)
 
     value, ok = runner.Value("bool")
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, true, value)
 
     -- positional arguments
@@ -65,18 +70,23 @@ function TestNew(t: testing.T)
     assert.Equal(t, {"test1", "quoted string2", "--unused3", "posarg4"}, runner.Args())
 
     value, ok = runner.Arg(1)
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, "test1", value)
 
     value, ok = runner.Arg(2)
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, "quoted string2", value)
 
     value, ok = runner.Arg(3)
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, "--unused3", value)
 
     value, ok = runner.Arg(4)
-    assert.Equal(t, true, ok)
+    assert.True(t, ok)
     assert.Equal(t, "posarg4", value)
+
+    -- default value
+    value, ok = runner.Value("defaulter1")
+    assert.True(t, ok)
+    assert.Equal(t, "unset_default_value", value)
 end
